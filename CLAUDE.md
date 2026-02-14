@@ -82,6 +82,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 | 7 | お題データセット + キャラなりきりモード | `docs/plans/07-dataset-and-character-mode.md` |
 | 8 | 回答タイピングアニメーション | `docs/plans/08-typing-animation.md` |
 | 9 | レイアウト変更 & タイピング速度調整 | `docs/plans/09-layout-and-speed-tuning.md` |
+| 10 | 4位から順に発表 | `docs/plans/10-reverse-rank-order.md` |
 
 > **注意**: Phase 7 の DBマイグレーション（`supabase/migrations/002_character_mode.sql`）は未適用。手動実行が必要。
 

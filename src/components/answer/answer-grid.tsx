@@ -26,7 +26,7 @@ export function AnswerGrid({
   const sorted = [...answers].sort((a, b) => {
     const ra = rankMap.get(a.model_name)?.rank ?? 99;
     const rb = rankMap.get(b.model_name)?.rank ?? 99;
-    return ra - rb;
+    return rb - ra;
   });
 
   const [activeIndex, setActiveIndex] = useState(0);
