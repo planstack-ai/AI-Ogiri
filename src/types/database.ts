@@ -27,6 +27,8 @@ export interface Answer {
   answer_text: string;
   generation_time_ms: number | null;
   character_id: string | null;
+  model_version: string | null;
+  token_count: number | null;
   created_at: string;
 }
 

@@ -23,5 +23,7 @@ export async function generateDeepSeek(
   return {
     text: response.choices[0].message.content ?? "",
     generationTimeMs: Date.now() - start,
+    modelVersion: response.model,
+    tokenCount: response.usage?.total_tokens ?? null,
   };
 }

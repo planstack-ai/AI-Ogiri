@@ -16,5 +16,7 @@ export async function generateGemini(
   return {
     text: result.response.text(),
     generationTimeMs: Date.now() - start,
+    modelVersion: "gemini-2.5-pro",
+    tokenCount: result.response.usageMetadata?.totalTokenCount ?? null,
   };
 }

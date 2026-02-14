@@ -36,6 +36,8 @@ interface GenerateResult {
   text: string;
   generationTimeMs: number;
   characterId: string | null;
+  modelVersion: string;
+  tokenCount: number | null;
 }
 
 export async function generateAllAnswers(
@@ -69,6 +71,8 @@ export async function generateAllAnswers(
       text: "(回答の生成に失敗しました)",
       generationTimeMs: 0,
       characterId: assignments?.[i]?.character.id ?? null,
+      modelVersion: "",
+      tokenCount: null,
     };
   });
 }

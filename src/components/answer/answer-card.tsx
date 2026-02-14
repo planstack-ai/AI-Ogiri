@@ -109,11 +109,17 @@ export function AnswerCard({
           <p className="mb-3 text-xs text-slate-400">{ranking.reasoning}</p>
         )}
         <div className="flex items-center justify-between">
-          {answer.generation_time_ms != null && (
-            <span className="text-xs text-slate-500">
-              {(answer.generation_time_ms / 1000).toFixed(1)}s
-            </span>
-          )}
+          <div className="flex items-center gap-3 text-xs text-slate-500">
+            {answer.model_version && (
+              <span>{answer.model_version}</span>
+            )}
+            {answer.token_count != null && (
+              <span>{answer.token_count.toLocaleString()} tokens</span>
+            )}
+            {answer.generation_time_ms != null && (
+              <span>{(answer.generation_time_ms / 1000).toFixed(1)}s</span>
+            )}
+          </div>
           {showVoteButton && onVote && (
             <button
               onClick={onVote}

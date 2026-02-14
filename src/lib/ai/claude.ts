@@ -18,5 +18,7 @@ export async function generateClaude(
   return {
     text: textBlock?.text ?? "",
     generationTimeMs: Date.now() - start,
+    modelVersion: message.model,
+    tokenCount: message.usage.input_tokens + message.usage.output_tokens,
   };
 }

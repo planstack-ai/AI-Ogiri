@@ -51,6 +51,8 @@ export async function POST(
         answer_text: a.text,
         generation_time_ms: a.generationTimeMs,
         character_id: a.characterId,
+        model_version: a.modelVersion || null,
+        token_count: a.tokenCount,
       }))
     );
 
