@@ -26,12 +26,12 @@ export function TypewriterText({ text, onComplete }: TypewriterTextProps) {
     }
 
     const currentChar = text[charIndex];
-    let delay = 30;
+    let delay = 60;
 
     if (LONG_PAUSE_CHARS.has(currentChar)) {
-      delay = 300;
+      delay = 600;
     } else if (PAUSE_CHARS.has(currentChar)) {
-      delay = 120;
+      delay = 240;
     }
 
     const timer = setTimeout(() => {

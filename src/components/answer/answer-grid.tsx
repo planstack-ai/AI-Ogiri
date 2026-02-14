@@ -38,7 +38,7 @@ export function AnswerGrid({
   }, []);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4">
       {sorted.map((answer, index) => {
         // アニメーション時は未到達のカードを描画しない（マウント時にフレッシュ状態を保証）
         if (animate && index > activeIndex) {

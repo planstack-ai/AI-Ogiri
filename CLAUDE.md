@@ -79,6 +79,11 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 | 4 | 投票機能 | `docs/plans/04-voting.md` |
 | 5 | SNSシェア画像生成 | `docs/plans/05-sns-share.md` |
 | 6 | ブラウズ + 仕上げ | `docs/plans/06-polish.md` |
+| 7 | お題データセット + キャラなりきりモード | `docs/plans/07-dataset-and-character-mode.md` |
+| 8 | 回答タイピングアニメーション | `docs/plans/08-typing-animation.md` |
+| 9 | レイアウト変更 & タイピング速度調整 | `docs/plans/09-layout-and-speed-tuning.md` |
+
+> **注意**: Phase 7 の DBマイグレーション（`supabase/migrations/002_character_mode.sql`）は未適用。手動実行が必要。
 
 ## デザイン方針
 
