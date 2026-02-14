@@ -88,6 +88,7 @@ export default async function TopicDetailPage({ params }: Props) {
             <AnswerGrid
               answers={answers as Answer[]}
               rankings={rankings}
+              animate
             />
           </div>
 
