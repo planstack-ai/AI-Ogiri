@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
+    console.error("Failed to create topic:", error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 

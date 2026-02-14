@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { AnswerGrid } from "@/components/answer/answer-grid";
@@ -111,6 +112,21 @@ export default async function TopicDetailPage({ params }: Props) {
           </div>
         </>
       )}
+
+      <div className="mt-8 flex items-center justify-center gap-4">
+        <Link
+          href="/topics"
+          className="rounded-lg border border-slate-600 px-5 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-700"
+        >
+          一覧に戻る
+        </Link>
+        <Link
+          href="/topics/new"
+          className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
+        >
+          新しいお題を投稿
+        </Link>
+      </div>
     </div>
   );
 }
