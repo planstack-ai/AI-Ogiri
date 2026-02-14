@@ -12,6 +12,13 @@ const RANK_BADGES: Record<number, string> = {
   4: "4th",
 };
 
+const RANK_COLORS: Record<number, string> = {
+  1: "bg-amber-400 text-amber-900",
+  2: "bg-slate-300 text-slate-800",
+  3: "bg-orange-400 text-orange-900",
+  4: "bg-slate-700 text-slate-300",
+};
+
 const RANK_EMOJI: Record<number, string> = {
   1: "\u{1f947}",
   2: "\u{1f948}",
@@ -65,14 +72,23 @@ export function AnswerCard({
             </span>
           )}
         </div>
-        <span
-          className={`rounded-full bg-slate-700 px-2 py-0.5 text-xs text-slate-300 transition-opacity duration-300 ${
+        <div
+          className={`flex items-center gap-2 transition-opacity duration-300 ${
             typingDone ? "opacity-100" : "opacity-0"
           }`}
         >
-          {RANK_BADGES[rank]}
-          {ranking?.score != null && ` (${ranking.score}pts)`}
-        </span>
+          {ranking?.score != null && (
+            <span className="text-lg font-bold text-white">
+              {ranking.score}
+              <span className="text-xs font-normal text-slate-400">pts</span>
+            </span>
+          )}
+          <span
+            className={`rounded-full px-2.5 py-1 text-sm font-bold ${RANK_COLORS[rank] ?? RANK_COLORS[4]}`}
+          >
+            {RANK_BADGES[rank]}
+          </span>
+        </div>
       </div>
       <p className="mb-3 whitespace-pre-wrap text-slate-200">
         {animate && !typingDone ? (
