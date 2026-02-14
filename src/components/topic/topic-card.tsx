@@ -19,9 +19,16 @@ export function TopicCard({ topic }: TopicCardProps) {
       href={`/topics/${topic.id}`}
       className="block rounded-xl border border-slate-700 bg-slate-800 p-5 transition-colors hover:border-slate-600"
     >
-      <p className="mb-2 text-lg font-medium text-white">
-        {topic.prompt}
-      </p>
+      <div className="mb-2 flex items-center gap-2">
+        <p className="text-lg font-medium text-white">
+          {topic.prompt}
+        </p>
+        {topic.is_character_mode && (
+          <span className="shrink-0 rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-400">
+            なりきり
+          </span>
+        )}
+      </div>
       <div className="flex items-center gap-3 text-sm text-slate-400">
         {topic.status === "completed" && winner && (
           <span>

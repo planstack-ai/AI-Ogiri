@@ -17,6 +17,7 @@ const RANK_EMOJI: Record<number, string> = {
 interface AnswerCardProps {
   answer: Answer;
   ranking?: RankingEntry;
+  characterName?: string;
   voted?: boolean;
   onVote?: () => void;
   showVoteButton?: boolean;
@@ -25,6 +26,7 @@ interface AnswerCardProps {
 export function AnswerCard({
   answer,
   ranking,
+  characterName,
   voted,
   onVote,
   showVoteButton,
@@ -38,10 +40,17 @@ export function AnswerCard({
       style={{ borderLeftWidth: "4px", borderLeftColor: color }}
     >
       <div className="mb-3 flex items-center justify-between">
-        <span className="font-bold text-white">
-          {RANK_EMOJI[rank] ? `${RANK_EMOJI[rank]} ` : ""}
-          {MODEL_DISPLAY_NAMES[answer.model_name]}
-        </span>
+        <div>
+          <span className="font-bold text-white">
+            {RANK_EMOJI[rank] ? `${RANK_EMOJI[rank]} ` : ""}
+            {MODEL_DISPLAY_NAMES[answer.model_name]}
+          </span>
+          {characterName && (
+            <span className="ml-2 text-sm text-amber-400">
+              as {characterName}
+            </span>
+          )}
+        </div>
         <span className="rounded-full bg-slate-700 px-2 py-0.5 text-xs text-slate-300">
           {RANK_BADGES[rank]}
           {ranking?.score != null && ` (${ranking.score}pts)`}

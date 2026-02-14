@@ -8,6 +8,7 @@ export function TopicForm() {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [isAiGenerated, setIsAiGenerated] = useState(false);
+  const [isCharacterMode, setIsCharacterMode] = useState(false);
   const router = useRouter();
 
   const handleGeneratePrompt = async () => {
@@ -36,7 +37,11 @@ export function TopicForm() {
       const topicRes = await fetch("/api/topics", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt.trim(), is_ai_generated: isAiGenerated }),
+        body: JSON.stringify({
+          prompt: prompt.trim(),
+          is_ai_generated: isAiGenerated,
+          is_character_mode: isCharacterMode,
+        }),
       });
       const topic = await topicRes.json();
       if (!topicRes.ok) throw new Error(topic.error);
@@ -69,6 +74,25 @@ export function TopicForm() {
           {prompt.length}/200
         </p>
       </div>
+      {/* キャラなりきりモード */}
+      <label className="flex cursor-pointer items-center gap-3">
+        <div className="relative">
+          <input
+            type="checkbox"
+            checked={isCharacterMode}
+            onChange={(e) => setIsCharacterMode(e.target.checked)}
+            className="peer sr-only"
+          />
+          <div className="h-6 w-11 rounded-full bg-slate-600 transition-colors peer-checked:bg-amber-500" />
+          <div className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
+        </div>
+        <span className="text-sm text-slate-300">
+          キャラなりきりモード
+        </span>
+        <span className="text-xs text-slate-500">
+          AIがアニメキャラになりきって回答します
+        </span>
+      </label>
       <div className="flex gap-3">
         <button
           type="button"

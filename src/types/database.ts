@@ -14,6 +14,7 @@ export interface Topic {
   prompt: string;
   author_id: string | null;
   is_ai_generated: boolean;
+  is_character_mode: boolean;
   status: TopicStatus;
   created_at: string;
   updated_at: string;
@@ -25,6 +26,7 @@ export interface Answer {
   model_name: ModelName;
   answer_text: string;
   generation_time_ms: number | null;
+  character_id: string | null;
   created_at: string;
 }
 

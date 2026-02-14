@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createServerClient } from "@/lib/supabase/server";
 import { generateAllAnswers } from "@/lib/ai/generate-all";
 import { judgeAnswers } from "@/lib/ai/judge";
+import { getCharacterById } from "@/lib/ai/characters-dataset";
 
 export async function POST(
   request: NextRequest,
@@ -39,7 +40,8 @@ export async function POST(
 
   try {
     // 1. 4モデル並列で回答生成
-    const answers = await generateAllAnswers(topic.prompt);
+    const isCharacterMode = topic.is_character_mode ?? false;
+    const answers = await generateAllAnswers(topic.prompt, isCharacterMode);
 
     // 2. 回答をDBに保存
     await admin.from("answers").insert(
@@ -48,6 +50,7 @@ export async function POST(
         model_name: a.modelName,
         answer_text: a.text,
         generation_time_ms: a.generationTimeMs,
+        character_id: a.characterId,
       }))
     );
 
@@ -58,7 +61,14 @@ export async function POST(
       .eq("id", topicId);
     const judgment = await judgeAnswers(
       topic.prompt,
-      answers.map((a) => ({ modelName: a.modelName, text: a.text }))
+      answers.map((a) => ({
+        modelName: a.modelName,
+        text: a.text,
+        characterName: a.characterId
+          ? getCharacterById(a.characterId)?.name
+          : undefined,
+      })),
+      isCharacterMode
     );
 
     // 4. 審査結果保存

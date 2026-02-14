@@ -1,4 +1,5 @@
 import { MODEL_DISPLAY_NAMES, MODEL_COLORS } from "@/lib/utils/constants";
+import { getCharacterById } from "@/lib/ai/characters-dataset";
 import type { Topic, Answer, AiJudgment } from "@/types";
 
 const RANK_EMOJI: Record<number, string> = {
@@ -98,11 +99,22 @@ export function OgLayout({ topic, answers, judgment }: OgLayoutProps) {
                   fontSize: "14px",
                   fontWeight: 700,
                   color: "#e2e8f0",
-                  marginBottom: "8px",
+                  marginBottom: answer.character_id ? "2px" : "8px",
                 }}
               >
                 {emoji} {MODEL_DISPLAY_NAMES[answer.model_name]}
               </span>
+              {answer.character_id && (
+                <span
+                  style={{
+                    fontSize: "11px",
+                    color: "#fbbf24",
+                    marginBottom: "6px",
+                  }}
+                >
+                  as {getCharacterById(answer.character_id)?.name}
+                </span>
+              )}
               <span style={{ fontSize: "16px", color: "#cbd5e1" }}>
                 {text}
               </span>

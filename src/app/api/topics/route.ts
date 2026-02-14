@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { prompt, is_ai_generated } = await request.json();
+  const { prompt, is_ai_generated, is_character_mode } = await request.json();
 
   if (!prompt || typeof prompt !== "string" || prompt.length > 200) {
     return NextResponse.json(
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
       prompt: prompt.trim(),
       author_id: user.id,
       is_ai_generated: is_ai_generated ?? false,
+      is_character_mode: is_character_mode ?? false,
     })
     .select()
     .single();

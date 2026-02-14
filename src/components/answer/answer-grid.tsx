@@ -1,6 +1,7 @@
 "use client";
 
 import { AnswerCard } from "./answer-card";
+import { getCharacterById } from "@/lib/ai/characters-dataset";
 import type { Answer, RankingEntry } from "@/types";
 
 interface AnswerGridProps {
@@ -32,6 +33,7 @@ export function AnswerGrid({
           key={answer.id}
           answer={answer}
           ranking={rankMap.get(answer.model_name)}
+          characterName={answer.character_id ? getCharacterById(answer.character_id)?.name : undefined}
           voted={votedAnswerId === answer.id}
           onVote={onVote ? () => onVote(answer.id) : undefined}
           showVoteButton={showVoteButtons}
