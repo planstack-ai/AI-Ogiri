@@ -68,9 +68,9 @@ export function TopicForm() {
           placeholder="大喜利のお題を入力..."
           maxLength={200}
           rows={3}
-          className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none"
+          className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         />
-        <p className="mt-1 text-right text-xs text-slate-500">
+        <p className="mt-1 text-right text-xs text-slate-400">
           {prompt.length}/200
         </p>
       </div>
@@ -89,7 +89,7 @@ export function TopicForm() {
         <span className="text-sm text-slate-300">
           キャラなりきりモード
         </span>
-        <span className="text-xs text-slate-500">
+        <span className="text-xs text-slate-400">
           AIがアニメキャラになりきって回答します
         </span>
       </label>

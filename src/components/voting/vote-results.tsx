@@ -40,7 +40,7 @@ export function VoteResults({ answers, voteCounts, total }: VoteResultsProps) {
           </div>
         );
       })}
-      <p className="text-right text-xs text-slate-500">合計 {total} 票</p>
+      <p className="text-right text-xs text-slate-400">合計 {total} 票</p>
     </div>
   );
 }

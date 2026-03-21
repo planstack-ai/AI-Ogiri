@@ -93,4 +93,4 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 - ダークテーマ（slate-900 ベース）
 - モデル別カラー: ChatGPT=#10a37f, Gemini=#4285f4, Claude=#d97706, DeepSeek=#6366f1
-- レスポンシブ: モバイル1列、デスクトップ2x2グリッド
+- レイアウト: 回答カードは1列表示（4位→1位の順次発表演出のため）

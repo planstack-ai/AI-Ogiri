@@ -55,9 +55,13 @@ export function AnswerCard({
     onAnimationComplete?.();
   };
 
+  const isWinner = rank === 1 && typingDone;
+
   return (
     <div
-      className="rounded-xl border border-slate-700 bg-slate-800 p-5"
+      className={`rounded-xl border border-slate-700 bg-slate-800 p-5 ${
+        isWinner ? "animate-winner-reveal" : ""
+      }`}
       style={{ borderLeftWidth: "4px", borderLeftColor: color }}
     >
       <div className="mb-3 flex items-center justify-between">
@@ -109,7 +113,7 @@ export function AnswerCard({
           <p className="mb-3 text-xs text-slate-400">{ranking.reasoning}</p>
         )}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-slate-500">
+          <div className="flex items-center gap-3 text-xs text-slate-400">
             {answer.model_version && (
               <span>{answer.model_version}</span>
             )}

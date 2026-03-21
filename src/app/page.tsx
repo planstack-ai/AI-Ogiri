@@ -26,7 +26,7 @@ export default async function HomePage() {
           </p>
           <Link
             href="/topics/new"
-            className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-500"
+            className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
           >
             新しいお題を投稿する
           </Link>
@@ -54,7 +54,7 @@ export default async function HomePage() {
         )}
 
         {(!topics || topics.length === 0) && (
-          <p className="text-center text-slate-500">
+          <p className="text-center text-slate-400">
             まだ大喜利がありません。最初のお題を投稿しましょう！
           </p>
         )}

@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_URL,
+} from "@/lib/utils/constants";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,9 +18,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI大喜利グランプリ",
-  description:
-    "4つのAIモデルが大喜利で競い合う！お題を投稿して、AI審査員＋ユーザー投票でNo.1を決めよう。",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    locale: "ja_JP",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({

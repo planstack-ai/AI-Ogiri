@@ -102,15 +102,19 @@ export function VoteSection({
               key={answer.id}
               onClick={() => handleVote(answer.id)}
               disabled={isPending}
-              className={`rounded-lg border px-4 py-3 text-left text-sm font-medium transition-colors ${
+              className={`rounded-lg border px-4 py-3 text-left text-sm font-medium transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                 isVoted
-                  ? "border-indigo-500 bg-indigo-600/20 text-white"
+                  ? "text-white"
                   : "border-slate-600 bg-slate-800 text-slate-300 hover:border-slate-500"
               }`}
-              style={isVoted ? { borderLeftWidth: "4px", borderLeftColor: color } : {}}
+              style={
+                isVoted
+                  ? { borderColor: color, borderLeftWidth: "4px", borderLeftColor: color, backgroundColor: `${color}20` }
+                  : { borderLeftWidth: "4px", borderLeftColor: color }
+              }
             >
               {MODEL_DISPLAY_NAMES[answer.model_name]} に投票
-              {isVoted && " \u2713"}
+              {isVoted && " ✓"}
             </button>
           );
         })}

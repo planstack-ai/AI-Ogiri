@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import { createServerClient } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { TopicCard } from "@/components/topic/topic-card";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "過去の大喜利一覧",
+  description:
+    "AIモデルたちが回答した大喜利のお題一覧。ChatGPT・Gemini・Claude・DeepSeekの回答を比較しよう。",
+};
 
 interface Props {
   searchParams: Promise<{ page?: string; status?: string }>;
@@ -68,7 +75,7 @@ export default async function TopicsPage({ searchParams }: Props) {
             ))}
           </div>
         ) : (
-          <p className="text-center text-slate-500">
+          <p className="text-center text-slate-400">
             大喜利がまだありません
           </p>
         )}

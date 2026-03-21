@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { TopicForm } from "@/components/topic/topic-form";
+
+export const metadata: Metadata = {
+  title: "新しいお題を投稿",
+  description:
+    "大喜利のお題を投稿して、4つのAIモデルに回答させよう。AI審査員が順位を決定します。",
+};
 
 export default async function NewTopicPage() {
   const supabase = await createServerClient();
