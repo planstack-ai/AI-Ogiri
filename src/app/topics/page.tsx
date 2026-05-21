@@ -8,7 +8,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "過去の大喜利一覧",
   description:
-    "AIモデルたちが回答した大喜利のお題一覧。ChatGPT・Gemini・Claude・DeepSeekの回答を比較しよう。",
+    "AIモデルたちが回答した大喜利のお題一覧。ChatGPT・Gemini・Claude・DeepSeek・xAI Grokの回答を比較しよう。",
 };
 
 interface Props {

@@ -2,6 +2,7 @@ import { generateChatGPT } from "./openai";
 import { generateGemini } from "./gemini";
 import { generateClaude } from "./claude";
 import { generateDeepSeek } from "./deepseek";
+import { generateXAI } from "./xai";
 import { ModelName } from "./types";
 import { assignCharacters, type CharacterAssignment } from "./character-assigner";
 import type { Character } from "./characters-dataset";
@@ -29,6 +30,7 @@ const callers = [
   { name: "gemini" as ModelName, fn: generateGemini },
   { name: "claude" as ModelName, fn: generateClaude },
   { name: "deepseek" as ModelName, fn: generateDeepSeek },
+  { name: "xai" as ModelName, fn: generateXAI },
 ];
 
 interface GenerateResult {

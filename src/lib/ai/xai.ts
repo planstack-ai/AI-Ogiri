@@ -2,23 +2,28 @@ import OpenAI from "openai";
 import { AiResponse } from "./types";
 import { MODEL_IDS } from "./model-config";
 
-export async function generateChatGPT(
+export async function generateXAI(
   prompt: string,
   systemPrompt: string
 ): Promise<AiResponse> {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is required");
+  if (!process.env.XAI_API_KEY) {
+    throw new Error("XAI_API_KEY is required");
   }
 
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const client = new OpenAI({
+    apiKey: process.env.XAI_API_KEY,
+    baseURL: "https://api.x.ai/v1",
+    timeout: 360_000,
+  });
+
   const start = Date.now();
   const response = await client.chat.completions.create({
-    model: MODEL_IDS.chatgpt,
+    model: MODEL_IDS.xai,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
     ],
-    max_completion_tokens: 500,
+    max_tokens: 500,
     temperature: 0.9,
   });
   return {

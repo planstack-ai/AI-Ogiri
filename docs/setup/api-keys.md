@@ -10,6 +10,7 @@
 - [Google Gemini API](#google-gemini-api)
 - [Anthropic API](#anthropic-api)
 - [DeepSeek API](#deepseek-api)
+- [xAI API](#xai-api)
 
 ---
 
@@ -87,7 +88,7 @@ GitHub アカウントでのログインに使用します。
 
 ## OpenAI API
 
-ChatGPT（gpt-4o）の回答生成と AI 審査員に使用します。
+ChatGPT（既定値: `gpt-5.5`）の回答生成と AI 審査員に使用します。
 
 ### キーの取得
 
@@ -100,18 +101,22 @@ ChatGPT（gpt-4o）の回答生成と AI 審査員に使用します。
 
 ```
 OPENAI_API_KEY=sk-...
+# 任意: モデルを固定・更新したい場合
+OPENAI_ANSWER_MODEL=gpt-5.5
+OPENAI_JUDGE_MODEL=gpt-5.5
+OPENAI_TOPIC_MODEL=gpt-5.5
 ```
 
 ### 注意事項
 
 - 利用にはクレジット（残高）が必要です。**Billing** → **Add payment method** で支払い方法を設定してください
-- 本アプリでは `gpt-4o` モデルを使用します
+- モデルを差し替える場合は `OPENAI_ANSWER_MODEL`、`OPENAI_JUDGE_MODEL`、`OPENAI_TOPIC_MODEL` を設定してください
 
 ---
 
 ## Google Gemini API
 
-Gemini（gemini-2.5-pro）の回答生成に使用します。
+Gemini（既定値: `gemini-3.1-pro-preview`）の回答生成に使用します。
 
 ### キーの取得
 
@@ -125,6 +130,8 @@ Gemini（gemini-2.5-pro）の回答生成に使用します。
 
 ```
 GEMINI_API_KEY=AIza...
+# 任意: モデルを固定・更新したい場合
+GEMINI_MODEL=gemini-3.1-pro-preview
 ```
 
 ### 注意事項
@@ -136,7 +143,7 @@ GEMINI_API_KEY=AIza...
 
 ## Anthropic API
 
-Claude（claude-sonnet-4-20250514）の回答生成に使用します。
+Claude（既定値: `claude-opus-4-7`）の回答生成に使用します。
 
 ### キーの取得
 
@@ -149,6 +156,8 @@ Claude（claude-sonnet-4-20250514）の回答生成に使用します。
 
 ```
 ANTHROPIC_API_KEY=sk-ant-...
+# 任意: モデルを固定・更新したい場合
+CLAUDE_MODEL=claude-opus-4-7
 ```
 
 ### 注意事項
@@ -159,7 +168,7 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 ## DeepSeek API
 
-DeepSeek（deepseek-chat）の回答生成に使用します。OpenAI 互換の API です。
+DeepSeek（既定値: `deepseek-v4-pro`）の回答生成に使用します。OpenAI 互換の API です。
 
 ### キーの取得
 
@@ -172,11 +181,38 @@ DeepSeek（deepseek-chat）の回答生成に使用します。OpenAI 互換の 
 
 ```
 DEEPSEEK_API_KEY=sk-...
+# 任意: モデルを固定・更新したい場合
+DEEPSEEK_MODEL=deepseek-v4-pro
 ```
 
 ### 注意事項
 
 - 利用にはチャージが必要です。**Top up** から残高を追加してください
+
+---
+
+## xAI API
+
+xAI Grok（既定値: `grok-4.3`）の回答生成に使用します。OpenAI 互換の API です。
+
+### キーの取得
+
+1. [xAI Console](https://console.x.ai/) にアクセスしてサインイン
+2. **API Keys** に移動
+3. 新しい API キーを作成
+4. 表示されたキーをコピー
+
+### .env.local への設定
+
+```
+XAI_API_KEY=xai-...
+# 任意: モデルを固定・更新したい場合
+XAI_MODEL=grok-4.3
+```
+
+### 注意事項
+
+- 利用には請求設定が必要です。xAI Console で課金設定とモデルアクセスを確認してください
 
 ---
 
@@ -189,4 +225,4 @@ npm run dev
 ```
 
 1. `http://localhost:3000` → **ログイン** → Google / GitHub でログインできることを確認
-2. お題を投稿して、4つの AI モデルすべてが回答を生成することを確認
+2. お題を投稿して、5つの AI モデルすべてが回答を生成することを確認

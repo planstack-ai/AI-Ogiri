@@ -63,7 +63,7 @@ export function OgLayout({ topic, answers, judgment }: OgLayoutProps) {
         </span>
       </div>
 
-      {/* 2x2 Answer grid */}
+      {/* Answer grid */}
       <div
         style={{
           display: "flex",
@@ -72,13 +72,13 @@ export function OgLayout({ topic, answers, judgment }: OgLayoutProps) {
           flex: 1,
         }}
       >
-        {sorted.slice(0, 4).map((answer) => {
-          const rank = rankMap.get(answer.model_name) ?? 4;
+        {sorted.slice(0, 5).map((answer) => {
+          const rank = rankMap.get(answer.model_name) ?? 5;
           const color = MODEL_COLORS[answer.model_name] ?? "#6366f1";
           const emoji = RANK_EMOJI[rank] ?? "";
           const text =
-            answer.answer_text.length > 60
-              ? answer.answer_text.slice(0, 57) + "..."
+            answer.answer_text.length > 46
+              ? answer.answer_text.slice(0, 43) + "..."
               : answer.answer_text;
 
           return (
@@ -87,7 +87,7 @@ export function OgLayout({ topic, answers, judgment }: OgLayoutProps) {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                width: "calc(50% - 6px)",
+                width: "calc(33.333% - 8px)",
                 backgroundColor: "#1e293b",
                 borderRadius: "12px",
                 padding: "16px",

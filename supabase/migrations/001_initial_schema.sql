@@ -44,7 +44,7 @@ CREATE TABLE public.answers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
   model_name TEXT NOT NULL
-    CHECK (model_name IN ('chatgpt', 'gemini', 'claude', 'deepseek')),
+    CHECK (model_name IN ('chatgpt', 'gemini', 'claude', 'deepseek', 'xai')),
   answer_text TEXT NOT NULL,
   generation_time_ms INTEGER,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),

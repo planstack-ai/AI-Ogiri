@@ -6,7 +6,7 @@ import { TopicForm } from "@/components/topic/topic-form";
 export const metadata: Metadata = {
   title: "新しいお題を投稿",
   description:
-    "大喜利のお題を投稿して、4つのAIモデルに回答させよう。AI審査員が順位を決定します。",
+    "大喜利のお題を投稿して、5つのAIモデルに回答させよう。AI審査員が順位を決定します。",
 };
 
 export default async function NewTopicPage() {

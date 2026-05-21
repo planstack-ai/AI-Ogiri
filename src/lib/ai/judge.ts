@@ -1,6 +1,7 @@
 import OpenAI from "openai";
+import { JUDGE_MODEL } from "./model-config";
 
-const JUDGE_SYSTEM_PROMPT = `あなたは大喜利の審査員です。お題と4つのAIモデルの回答が与えられます。
+const JUDGE_SYSTEM_PROMPT = `あなたは大喜利の審査員です。お題と5つのAIモデルの回答が与えられます。
 以下の基準で各回答を評価し、順位をつけてください：
 
 1. **面白さ** (40点): 笑いを誘えるか
@@ -17,7 +18,7 @@ const JUDGE_SYSTEM_PROMPT = `あなたは大喜利の審査員です。お題と
   "overall_comment": "全体的な講評を2〜3文で"
 }`;
 
-const CHARACTER_JUDGE_SYSTEM_PROMPT = `あなたは大喜利の審査員です。お題と4つのAIモデルの回答が与えられます。
+const CHARACTER_JUDGE_SYSTEM_PROMPT = `あなたは大喜利の審査員です。お題と5つのAIモデルの回答が与えられます。
 各モデルはアニメ・漫画キャラになりきって回答しています。
 
 以下の基準で各回答を評価し、順位をつけてください：
@@ -75,11 +76,12 @@ export async function judgeAnswers(
 
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const response = await client.chat.completions.create({
-    model: "gpt-4o",
+    model: JUDGE_MODEL,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
+    max_completion_tokens: 1000,
     response_format: { type: "json_object" },
     temperature: 0.3,
   });

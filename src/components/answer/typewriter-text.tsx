@@ -14,7 +14,10 @@ export function TypewriterText({ text, onComplete }: TypewriterTextProps) {
   const [charIndex, setCharIndex] = useState(0);
   const completedRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
-  onCompleteRef.current = onComplete;
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     if (charIndex >= text.length) {

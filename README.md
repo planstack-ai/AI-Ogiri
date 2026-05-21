@@ -1,13 +1,13 @@
 # AI大喜利グランプリ
 
-4つのAIモデル（ChatGPT, Gemini, Claude, DeepSeek）が大喜利のお題に回答し、AI審査員＋ユーザー投票でNo.1を決定するWebサービス。
+5つのAIモデル（ChatGPT, Gemini, Claude, DeepSeek, xAI Grok）が大喜利のお題に回答し、AI審査員＋ユーザー投票でNo.1を決定するWebサービス。
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router, TypeScript)
 - **DB/Auth**: Supabase (PostgreSQL + Auth + RLS)
 - **Styling**: Tailwind CSS v4
-- **AI**: OpenAI (`gpt-4o`), Google Generative AI (`gemini-2.5-pro`), Anthropic (`claude-sonnet-4-20250514`), DeepSeek (`deepseek-chat`)
+- **AI**: OpenAI (`gpt-5.5`), Google Generative AI (`gemini-3.1-pro-preview`), Anthropic (`claude-opus-4-7`), DeepSeek (`deepseek-v4-pro`), xAI (`grok-4.3`)
 - **OG画像**: Satori + @resvg/resvg-js
 
 ## セットアップ
@@ -35,6 +35,14 @@ cp .env.local.example .env.local
 | `GEMINI_API_KEY` | Google Gemini API キー | [Google AI Studio](https://aistudio.google.com/apikey) |
 | `ANTHROPIC_API_KEY` | Anthropic API キー | [Anthropic Console](https://console.anthropic.com/) |
 | `DEEPSEEK_API_KEY` | DeepSeek API キー | [DeepSeek Platform](https://platform.deepseek.com/) |
+| `XAI_API_KEY` | xAI API キー | [xAI Console](https://console.x.ai/) |
+| `OPENAI_ANSWER_MODEL` | ChatGPT 回答モデル（任意） | 既定値: `gpt-5.5` |
+| `OPENAI_JUDGE_MODEL` | AI 審査員モデル（任意） | 既定値: `gpt-5.5` |
+| `OPENAI_TOPIC_MODEL` | お題生成モデル（任意） | 既定値: `gpt-5.5` |
+| `GEMINI_MODEL` | Gemini 回答モデル（任意） | 既定値: `gemini-3.1-pro-preview` |
+| `CLAUDE_MODEL` | Claude 回答モデル（任意） | 既定値: `claude-opus-4-7` |
+| `DEEPSEEK_MODEL` | DeepSeek 回答モデル（任意） | 既定値: `deepseek-v4-pro` |
+| `XAI_MODEL` | xAI Grok 回答モデル（任意） | 既定値: `grok-4.3` |
 | `NEXT_PUBLIC_SITE_URL` | サイトの公開 URL | ローカルでは `http://localhost:3000` |
 
 ### 3. Supabase のセットアップ

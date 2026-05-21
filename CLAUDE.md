@@ -1,13 +1,13 @@
 # AI大喜利グランプリ
 
-4つのAIモデル（ChatGPT, Gemini, Claude, DeepSeek）が大喜利のお題に回答し、AI審査員＋ユーザー投票でNo.1を決定するWebサービス。
+5つのAIモデル（ChatGPT, Gemini, Claude, DeepSeek, xAI Grok）が大喜利のお題に回答し、AI審査員＋ユーザー投票でNo.1を決定するWebサービス。
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router, TypeScript, `src/` ディレクトリ)
 - **DB/Auth**: Supabase (PostgreSQL + Auth + RLS)
 - **Styling**: Tailwind CSS v4
-- **AI**: OpenAI SDK (`gpt-4o`), Google Generative AI (`gemini-2.5-pro`), Anthropic SDK (`claude-sonnet-4-20250514`), DeepSeek (`deepseek-chat`, OpenAI互換)
+- **AI**: OpenAI SDK (`gpt-5.5`), Google Generative AI (`gemini-3.1-pro-preview`), Anthropic SDK (`claude-opus-4-7`), DeepSeek (`deepseek-v4-pro`, OpenAI互換), xAI (`grok-4.3`, OpenAI互換)
 - **OG画像**: Satori + @resvg/resvg-js
 
 ## コマンド
@@ -50,7 +50,7 @@ src/
 - **Supabase クライアントは3種**: ブラウザ用(`client.ts`)、Server Component用(`server.ts`)、管理用(`admin.ts` = service_role)。用途に応じて使い分ける
 - **AI回答の保存・審査結果の保存は `admin` (service_role) 経由**: RLSで一般ユーザーのINSERTを禁止しているため
 - **AI回答生成は `Promise.allSettled`** で並列実行。個別の失敗が全体をブロックしない
-- **AI審査員は GPT-4o** を使用（回答者とは別インスタンス、temperature=0.3）
+- **AI審査員は GPT-5.5** を既定で使用（`OPENAI_JUDGE_MODEL` で変更可能、temperature=0.3）
 - **OG画像の Satori は flexbox のみ対応**（CSS Grid 不可）
 - **投票は1ユーザー1トピック1票**（upsert で変更可能）
 
@@ -64,6 +64,14 @@ OPENAI_API_KEY=
 GEMINI_API_KEY=
 ANTHROPIC_API_KEY=
 DEEPSEEK_API_KEY=
+XAI_API_KEY=
+OPENAI_ANSWER_MODEL=gpt-5.5
+OPENAI_JUDGE_MODEL=gpt-5.5
+OPENAI_TOPIC_MODEL=gpt-5.5
+GEMINI_MODEL=gemini-3.1-pro-preview
+CLAUDE_MODEL=claude-opus-4-7
+DEEPSEEK_MODEL=deepseek-v4-pro
+XAI_MODEL=grok-4.3
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
@@ -82,7 +90,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 | 7 | お題データセット + キャラなりきりモード | `docs/plans/07-dataset-and-character-mode.md` |
 | 8 | 回答タイピングアニメーション | `docs/plans/08-typing-animation.md` |
 | 9 | レイアウト変更 & タイピング速度調整 | `docs/plans/09-layout-and-speed-tuning.md` |
-| 10 | 4位から順に発表 | `docs/plans/10-reverse-rank-order.md` |
+| 10 | 下位から順に発表 | `docs/plans/10-reverse-rank-order.md` |
 | 11 | 順位・得点の視覚強調 | `docs/plans/11-rank-score-emphasis.md` |
 | 12 | モデルバージョン & トークン数表示 | `docs/plans/12-model-version-and-tokens.md` |
 | 13 | データセット拡充（IPPONグランプリ風） | `docs/plans/13-expand-dataset.md` |
@@ -92,5 +100,5 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ## デザイン方針
 
 - ダークテーマ（slate-900 ベース）
-- モデル別カラー: ChatGPT=#10a37f, Gemini=#4285f4, Claude=#d97706, DeepSeek=#6366f1
-- レイアウト: 回答カードは1列表示（4位→1位の順次発表演出のため）
+- モデル別カラー: ChatGPT=#10a37f, Gemini=#4285f4, Claude=#d97706, DeepSeek=#6366f1, xAI=#e5e7eb
+- レイアウト: 回答カードは1列表示（下位→1位の順次発表演出のため）
