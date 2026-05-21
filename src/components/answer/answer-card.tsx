@@ -10,6 +10,7 @@ const RANK_BADGES: Record<number, string> = {
   2: "2nd",
   3: "3rd",
   4: "4th",
+  5: "5th",
 };
 
 const RANK_COLORS: Record<number, string> = {
@@ -17,6 +18,7 @@ const RANK_COLORS: Record<number, string> = {
   2: "bg-slate-300 text-slate-800",
   3: "bg-orange-400 text-orange-900",
   4: "bg-slate-700 text-slate-300",
+  5: "bg-slate-900 text-slate-300",
 };
 
 const RANK_EMOJI: Record<number, string> = {
@@ -47,7 +49,7 @@ export function AnswerCard({
   onAnimationComplete,
 }: AnswerCardProps) {
   const [typingDone, setTypingDone] = useState(!animate);
-  const rank = ranking?.rank ?? 4;
+  const rank = ranking?.rank ?? 5;
   const color = MODEL_COLORS[answer.model_name] ?? "#6366f1";
 
   const handleTypingComplete = () => {

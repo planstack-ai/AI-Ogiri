@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { sampleTopics } from "./topic-sampler";
+import { TOPIC_GENERATOR_MODEL } from "./model-config";
 
 interface PromptTemplate {
   role: string;
@@ -76,10 +77,10 @@ ${examplesBlock}
 export async function generateTopic(): Promise<string> {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const response = await client.chat.completions.create({
-    model: "gpt-4o",
+    model: TOPIC_GENERATOR_MODEL,
     messages: [{ role: "user", content: buildTopicGeneratorPrompt() }],
     temperature: 1.0,
-    max_tokens: 200,
+    max_completion_tokens: 200,
   });
   return response.choices[0].message.content?.trim() ?? "";
 }

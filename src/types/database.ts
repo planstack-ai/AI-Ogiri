@@ -1,5 +1,5 @@
 export type TopicStatus = "pending" | "generating" | "judging" | "completed";
-export type ModelName = "chatgpt" | "gemini" | "claude" | "deepseek";
+export type ModelName = "chatgpt" | "gemini" | "claude" | "deepseek" | "xai";
 
 export interface Profile {
   id: string;

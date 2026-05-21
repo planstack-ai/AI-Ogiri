@@ -1,18 +1,23 @@
 import OpenAI from "openai";
 import { AiResponse } from "./types";
-
-const client = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: "https://api.deepseek.com",
-});
+import { MODEL_IDS } from "./model-config";
 
 export async function generateDeepSeek(
   prompt: string,
   systemPrompt: string
 ): Promise<AiResponse> {
+  if (!process.env.DEEPSEEK_API_KEY) {
+    throw new Error("DEEPSEEK_API_KEY is required");
+  }
+
+  const client = new OpenAI({
+    apiKey: process.env.DEEPSEEK_API_KEY,
+    baseURL: "https://api.deepseek.com",
+  });
+
   const start = Date.now();
   const response = await client.chat.completions.create({
-    model: "deepseek-chat",
+    model: MODEL_IDS.deepseek,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },

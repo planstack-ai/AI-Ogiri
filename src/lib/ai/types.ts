@@ -5,4 +5,12 @@ export interface AiResponse {
   tokenCount: number | null;
 }
 
-export type ModelName = "chatgpt" | "gemini" | "claude" | "deepseek";
+export const ANSWERING_MODELS = [
+  "chatgpt",
+  "gemini",
+  "claude",
+  "deepseek",
+  "xai",
+] as const;
+
+export type ModelName = (typeof ANSWERING_MODELS)[number];

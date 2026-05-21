@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createServerClient } from "@/lib/supabase/server";
 import { generateAllAnswers } from "@/lib/ai/generate-all";
 import { judgeAnswers } from "@/lib/ai/judge";
+import { JUDGE_MODEL } from "@/lib/ai/model-config";
 import { getCharacterById } from "@/lib/ai/characters-dataset";
 
 export async function POST(
@@ -39,7 +40,7 @@ export async function POST(
     .eq("id", topicId);
 
   try {
-    // 1. 4モデル並列で回答生成
+    // 1. 5モデル並列で回答生成
     const isCharacterMode = topic.is_character_mode ?? false;
     const answers = await generateAllAnswers(topic.prompt, isCharacterMode);
 
@@ -76,7 +77,7 @@ export async function POST(
     // 4. 審査結果保存
     await admin.from("ai_judgments").insert({
       topic_id: topicId,
-      judge_model: "gpt-4o",
+      judge_model: JUDGE_MODEL,
       rankings: judgment.rankings,
       overall_comment: judgment.overall_comment,
     });

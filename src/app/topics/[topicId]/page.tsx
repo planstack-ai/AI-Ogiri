@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!topic) return {};
 
   const title = `「${topic.prompt}」`;
-  const description = `お題「${topic.prompt}」に4つのAIモデルが回答！ChatGPT・Gemini・Claude・DeepSeekの大喜利結果を見てみよう。`;
+  const description = `お題「${topic.prompt}」に5つのAIモデルが回答！ChatGPT・Gemini・Claude・DeepSeek・xAI Grokの大喜利結果を見てみよう。`;
   const ogImageUrl = `${SITE_URL}/api/og/${topicId}`;
 
   return {

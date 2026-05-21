@@ -1,6 +1,6 @@
 export const SITE_NAME = "AI大喜利グランプリ";
 export const SITE_DESCRIPTION =
-  "4つのAIモデルが大喜利で競い合う！お題を投稿して、AI審査員＋ユーザー投票でNo.1を決めよう。";
+  "5つのAIモデルが大喜利で競い合う！お題を投稿して、AI審査員＋ユーザー投票でNo.1を決めよう。";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -9,6 +9,7 @@ export const MODEL_DISPLAY_NAMES: Record<string, string> = {
   gemini: "Gemini",
   claude: "Claude",
   deepseek: "DeepSeek",
+  xai: "xAI Grok",
 };
 
 export const MODEL_COLORS: Record<string, string> = {
@@ -16,4 +17,5 @@ export const MODEL_COLORS: Record<string, string> = {
   gemini: "#4285f4",
   claude: "#d97706",
   deepseek: "#6366f1",
+  xai: "#e5e7eb",
 };
