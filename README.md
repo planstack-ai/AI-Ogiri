@@ -35,7 +35,7 @@ cp .env.local.example .env.local
 | `GEMINI_API_KEY` | Google Gemini API キー | [Google AI Studio](https://aistudio.google.com/apikey) |
 | `ANTHROPIC_API_KEY` | Anthropic API キー | [Anthropic Console](https://console.anthropic.com/) |
 | `DEEPSEEK_API_KEY` | DeepSeek API キー | [DeepSeek Platform](https://platform.deepseek.com/) |
-| `XAI_API_KEY` | xAI API キー | [xAI Console](https://console.x.ai/) |
+| `XAI_API_KEY` | xAI API キー（回答生成 + お題生成時の Web Search） | [xAI Console](https://console.x.ai/) |
 | `OPENAI_ANSWER_MODEL` | ChatGPT 回答モデル（任意） | 既定値: `gpt-5.5` |
 | `OPENAI_JUDGE_MODEL` | AI 審査員モデル（任意） | 既定値: `gpt-5.5` |
 | `OPENAI_TOPIC_MODEL` | お題生成モデル（任意） | 既定値: `gpt-5.5` |
