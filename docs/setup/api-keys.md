@@ -193,7 +193,7 @@ DEEPSEEK_MODEL=deepseek-v4-pro
 
 ## xAI API
 
-xAI Grok（既定値: `grok-4.3`）の回答生成に使用します。OpenAI 互換の API です。
+xAI Grok（既定値: `grok-4.3`）の回答生成と、お題生成時の Web Search 付き候補生成に使用します。OpenAI 互換の API です。
 
 ### キーの取得
 
@@ -212,7 +212,7 @@ XAI_MODEL=grok-4.3
 
 ### 注意事項
 
-- 利用には請求設定が必要です。xAI Console で課金設定とモデルアクセスを確認してください
+- 利用には請求設定が必要です。xAI Console で課金設定、モデルアクセス、Web Search tool の利用可否を確認してください
 
 ---
 
