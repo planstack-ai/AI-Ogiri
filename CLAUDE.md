@@ -41,7 +41,7 @@ src/
 │   ├── share/                    # SNSシェアボタン
 │   ├── topic/                    # お題カード・フォーム
 │   └── layout/                   # ヘッダー・フッター
-├── middleware.ts                  # Supabase Auth セッション管理
+├── proxy.ts                       # Supabase Auth セッション管理
 └── types/                        # 型定義
 ```
 

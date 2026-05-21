@@ -2,7 +2,34 @@ import type { MetadataRoute } from "next";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SITE_URL } from "@/lib/utils/constants";
 
+const STATIC_ENTRIES: MetadataRoute.Sitemap = [
+  {
+    url: SITE_URL,
+    lastModified: new Date(),
+    changeFrequency: "daily",
+    priority: 1,
+  },
+  {
+    url: `${SITE_URL}/topics`,
+    lastModified: new Date(),
+    changeFrequency: "daily",
+    priority: 0.9,
+  },
+  {
+    url: `${SITE_URL}/topics/new`,
+    changeFrequency: "monthly",
+    priority: 0.5,
+  },
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return STATIC_ENTRIES;
+  }
+
   const supabase = createAdminClient();
 
   const { data: topics } = await supabase
@@ -18,24 +45,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [
-    {
-      url: SITE_URL,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: `${SITE_URL}/topics`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/topics/new`,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    ...topicEntries,
-  ];
+  return [...STATIC_ENTRIES, ...topicEntries];
 }
