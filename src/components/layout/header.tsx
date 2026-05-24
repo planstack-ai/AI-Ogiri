@@ -7,9 +7,11 @@ import type { User } from "@supabase/supabase-js";
 
 export function Header() {
   const [user, setUser] = useState<User | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
 
     const {
@@ -18,20 +20,29 @@ export function Header() {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, []);
 
   const handleLogout = async () => {
+    const supabase = createClient();
+    if (!supabase) return;
+
     await supabase.auth.signOut();
     window.location.href = "/";
   };
 
   return (
     <header className="border-b border-slate-700 bg-slate-800/50 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="text-lg font-bold text-white">
           AI大喜利グランプリ
         </Link>
-        <nav className="flex items-center gap-4">
+        <nav className="flex flex-wrap items-center justify-end gap-3 sm:gap-4">
+          <Link
+            href="/ai-wolf"
+            className="text-sm text-slate-300 hover:text-white"
+          >
+            AI狼
+          </Link>
           <Link
             href="/topics"
             className="text-sm text-slate-300 hover:text-white"

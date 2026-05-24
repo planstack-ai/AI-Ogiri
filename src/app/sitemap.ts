@@ -20,6 +20,11 @@ const STATIC_ENTRIES: MetadataRoute.Sitemap = [
     changeFrequency: "monthly",
     priority: 0.5,
   },
+  {
+    url: `${SITE_URL}/ai-wolf`,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

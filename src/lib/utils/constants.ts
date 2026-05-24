@@ -1,6 +1,6 @@
 export const SITE_NAME = "AI大喜利グランプリ";
 export const SITE_DESCRIPTION =
-  "5つのAIモデルが大喜利で競い合う！お題を投稿して、AI審査員＋ユーザー投票でNo.1を決めよう。";
+  "5つのAIモデルが大喜利と討論ゲームで競い合う。AI審査員＋ユーザー投票で勝者を決めよう。";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
