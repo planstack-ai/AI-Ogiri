@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Fragment, type ReactNode, useMemo, useState } from "react";
 import {
   AI_WOLF_MAX_DEBATE_TURNS,
   AI_WOLF_MAX_HUNT_TURNS,
@@ -93,9 +93,63 @@ function ModeratorNote({
           {session.moderator.name}
         </span>
       </div>
-      <p className="text-sm leading-6 text-slate-200">{note}</p>
+      <p className="text-sm leading-6 text-slate-200">
+        <DecoratedText text={note} />
+      </p>
     </div>
   );
+}
+
+function renderQuotedText(text: string, keyPrefix: string): ReactNode[] {
+  const quotePattern = /(「[^」]+」|『[^』]+』|“[^”]+”)/g;
+  const wholeQuotePattern = /^(「[^」]+」|『[^』]+』|“[^”]+”)$/;
+  const parts = text.split(quotePattern);
+
+  return parts.map((part, index) => {
+    if (!part) return null;
+    const key = `${keyPrefix}-quote-${index}`;
+    if (wholeQuotePattern.test(part)) {
+      return (
+        <span
+          key={key}
+          className="rounded border border-cyan-400/20 bg-cyan-400/10 px-1 text-cyan-100"
+        >
+          {part}
+        </span>
+      );
+    }
+    return <Fragment key={key}>{part}</Fragment>;
+  });
+}
+
+function DecoratedText({ text }: { text: string }) {
+  const strongPattern = /<strong>([\s\S]*?)<\/strong>/g;
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = strongPattern.exec(text))) {
+    const before = text.slice(lastIndex, match.index);
+    if (before) {
+      nodes.push(...renderQuotedText(before, `plain-${nodes.length}`));
+    }
+    nodes.push(
+      <strong
+        key={`strong-${match.index}`}
+        className="font-extrabold text-white decoration-cyan-300 underline-offset-4"
+      >
+        {renderQuotedText(match[1] ?? "", `strong-${match.index}`)}
+      </strong>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  const rest = text.slice(lastIndex);
+  if (rest) {
+    nodes.push(...renderQuotedText(rest, `plain-${nodes.length}`));
+  }
+
+  return <>{nodes.length ? nodes : text}</>;
 }
 
 function ThinkingCard({
@@ -175,7 +229,7 @@ function ThreadMessage({
         )}
       </div>
       <p className="whitespace-pre-wrap text-[15px] leading-7 text-slate-100">
-        {message.text}
+        <DecoratedText text={message.text} />
       </p>
     </article>
   );

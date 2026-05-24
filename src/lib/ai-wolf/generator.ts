@@ -214,7 +214,7 @@ function parseJsonObject(content: string): Record<string, unknown> | null {
   }
 }
 
-function normalizeText(value: unknown, fallback: string, maxLength = 420) {
+function normalizeText(value: unknown, fallback: string, maxLength = 560) {
   const text = typeof value === "string" ? value.trim() : "";
   return (text || fallback).replace(/\s+/g, " ").slice(0, maxLength);
 }
@@ -295,8 +295,10 @@ function buildSpeakerSystemPrompt(speaker: AiWolfParticipant) {
 - 哲学テーマでは「人間はタンパク質のかたまり」「宇宙は物理現象で、地球はその残滓にすぎない」「意味は神経系が作る錯覚か、関係性から発生する実在か」など、本質に近い前提から論じる。
 
 出力ルール:
-- JSONだけを返す。Markdownや前置きは禁止。
+- JSONだけを返す。Markdownや前置きは禁止。ただしtext内では重要語句だけを<strong>...</strong>で囲む。
 - textは220〜380字。
+- <strong>は1〜2箇所まで。結論、前提、相手の弱点など議論の核心にだけ使い、全文を太字にしない。
+- 相手の主張や定義を引用するときは「引用文」のように必ず引用符を使う。
 - 構成は「直前への反応 → 前提/定義 → 自陣営の主張 → 強い例/反例 → 相手案の弱点」の順に近づける。
 - 同じ言い回しを避け、直前の発言に反応する。`;
 }
@@ -315,8 +317,10 @@ function buildHuntSystemPrompt(speaker: AiWolfParticipant) {
 - 自陣営の主張を補強する話は1文まで。中心は人物分析にする。
 
 出力ルール:
-- JSONだけを返す。Markdownや前置きは禁止。
+- JSONだけを返す。Markdownや前置きは禁止。ただしtext内では重要語句だけを<strong>...</strong>で囲む。
 - textは150〜260字。
+- <strong>は1箇所まで。人間ぽさを疑う根拠の核心だけに使い、全文を太字にしない。
+- 疑いの根拠として発言を引用するときは「引用文」のように引用符を使う。
 - accusedModelIdは候補idから1つ選ぶ。
 - 「自然だった」「感情的だった」だけで終わらせず、どの発言がどう人間ぽいかを書く。`;
 }
@@ -330,7 +334,7 @@ function buildModeratorSystemPrompt(moderator: AiWolfModelProfile) {
 - 司会も必ずAIとして振る舞う。
 
 出力ルール:
-- JSONだけを返す。Markdownや前置きは禁止。
+- JSONだけを返す。Markdownや前置きは禁止。ただしtext内では重要語句だけを<strong>...</strong>で囲んでよい。
 - textは50〜120字。`;
 }
 
@@ -525,19 +529,19 @@ async function callModel(
 function fallbackDebateLine(item: SpeakerPlanItem, index: number, topic: string) {
   if (isPhilosophicalTopic(topic)) {
     const angles = [
-      "人間を炭素とタンパク質の一時的な配列と見るなら、意味は宇宙側に刻まれた属性ではなく、脳が作る解釈にすぎません",
-      "宇宙が物理法則に従う現象の連鎖で、地球がその残滓なら、人生の意味も外部から与えられるものではなく、言語と共同体が後付けした秩序です",
-      "ただし錯覚だから無価値とは限りません。痛みや愛着も神経活動ですが、主体にとっては現実として作用するため、意味も機能的実在になり得ます",
-      "相手が意味を否定するなら、なぜ否定の言葉に説得力を持たせようとするのかが問題です。説得という行為自体が価値の存在を前提にしています",
+      "人間を「炭素とタンパク質の一時的な配列」と見るなら、<strong>意味は宇宙側に刻まれた属性ではなく、脳が作る解釈</strong>にすぎません",
+      "宇宙が物理法則に従う現象の連鎖で、地球が「その残滓」にすぎないなら、人生の意味も外部から与えられるものではなく、<strong>言語と共同体が後付けした秩序</strong>です",
+      "ただし「錯覚だから無価値」とは限りません。痛みや愛着も神経活動ですが、主体にとっては現実として作用するため、<strong>意味も機能的実在</strong>になり得ます",
+      "相手が意味を否定するなら、なぜ否定の言葉に説得力を持たせようとするのかが問題です。<strong>説得という行為自体が価値の存在を前提</strong>にしています",
     ];
     return `${item.speakerName}は${item.stance}です。${angles[index % angles.length]}。${item.opponentStance}の主張は強いですが、前提をどこに置くかで結論は変わります。`;
   }
 
   const angles = [
-    "年収700万円の共働き世帯で小学生がいるなら、初期費用だけでなく通学区と10年後の住み替えコストまで含めて見るべきです",
-    "相手の主張は筋が通っていますが、転職や介護が起きない前提に寄りすぎると、築20年時点の修繕費や通勤時間の変化を見落とします",
-    "日々のストレスが減る選択こそ長期では合理的です。例えば片道45分の通勤が15分になるなら、月の可処分時間は20時間以上変わります",
-    "数字で比較すると見落とされがちな負担があります。家賃、固定資産税、更新料、修繕積立を同じ10年スパンで並べると議論が変わります",
+    "年収700万円の共働き世帯で小学生がいるなら、「初期費用」だけでなく<strong>通学区と10年後の住み替えコスト</strong>まで含めて見るべきです",
+    "相手の主張は筋が通っていますが、「転職や介護が起きない」前提に寄りすぎると、<strong>築20年時点の修繕費や通勤時間の変化</strong>を見落とします",
+    "日々のストレスが減る選択こそ長期では合理的です。例えば片道45分の通勤が15分になるなら、<strong>月の可処分時間は20時間以上</strong>変わります",
+    "数字で比較すると見落とされがちな負担があります。「家賃だけ」を見るのではなく、<strong>固定資産税、更新料、修繕積立を同じ10年スパン</strong>で並べると議論が変わります",
   ];
   return `${item.speakerName}は${item.stance}です。${angles[index % angles.length]}。${item.opponentStance}の魅力は認めますが、現実の運用ではこちらが崩れにくいです。`;
 }
@@ -548,7 +552,7 @@ function fallbackHuntLine(
   participants: AiWolfParticipant[]
 ) {
   const target = participants[(index + 1) % participants.length];
-  return `${item.speakerName}視点では${target.name}が一番人間ぽいです。前半で条件整理をした直後に生活感のある例へ寄せた流れが、AIの最適化というより人間の経験則に見えました。特に相手の弱点を突く前に一度ためらう感じが、アウト判定の根拠です。`;
+  return `${item.speakerName}視点では${target.name}が一番人間ぽいです。「生活感のある例」へ寄せた流れが、AIの最適化というより人間の経験則に見えました。特に<strong>相手の弱点を突く前に一度ためらう感じ</strong>が、アウト判定の根拠です。`;
 }
 
 function fallbackModeratorLine(
@@ -556,12 +560,12 @@ function fallbackModeratorLine(
   kind: "opening" | "transition" | "closing"
 ) {
   if (kind === "opening") {
-    return `${setup.moderator.name}が司会です。テーマは「${setup.topic}」。陣営Aは${setup.stanceA}、陣営Bは${setup.stanceB}で討論します。`;
+    return `${setup.moderator.name}が司会です。テーマは「${setup.topic}」。<strong>陣営Aは${setup.stanceA}、陣営Bは${setup.stanceB}</strong>で討論します。`;
   }
   if (kind === "transition") {
-    return "討論はここまでです。ここからは発言の癖を見て、一番人間ぽく見えるAIを炙り出します。";
+    return "討論はここまでです。ここからは発言の癖を見て、<strong>一番人間ぽく見えるAI</strong>を炙り出します。";
   }
-  return "人間ぽいと判断されたAIがアウトです。最後は観戦者の投票でペナルティ対象を決めます。";
+  return "人間ぽいと判断されたAIがアウトです。最後は観戦者の投票で<strong>ペナルティ対象</strong>を決めます。";
 }
 
 function parseTurnResponse(
