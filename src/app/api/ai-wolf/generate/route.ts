@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  AiWolfConfigurationError,
   generateAiWolfSession,
   streamAiWolfSession,
 } from "@/lib/ai-wolf/generator";
@@ -8,6 +9,13 @@ import type { AiWolfGenerateInput } from "@/lib/ai-wolf/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof AiWolfConfigurationError) {
+    return error.message;
+  }
+  return "討論の生成中にエラーが発生しました";
+}
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => ({}))) as AiWolfGenerateInput;
@@ -34,7 +42,7 @@ export async function POST(request: NextRequest) {
           console.error("Failed to stream AI wolf session:", error);
           send({
             type: "error",
-            message: "討論の生成中にエラーが発生しました",
+            message: getErrorMessage(error),
           });
         } finally {
           controller.close();
@@ -51,7 +59,15 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const session = await generateAiWolfSession(body);
-  await saveAiWolfSession(session);
-  return NextResponse.json(session);
+  try {
+    const session = await generateAiWolfSession(body);
+    await saveAiWolfSession(session);
+    return NextResponse.json(session);
+  } catch (error) {
+    console.error("Failed to generate AI wolf session:", error);
+    return NextResponse.json(
+      { error: getErrorMessage(error) },
+      { status: error instanceof AiWolfConfigurationError ? 400 : 500 }
+    );
+  }
 }

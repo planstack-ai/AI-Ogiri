@@ -58,12 +58,47 @@ interface ParsedTurn {
   accusedModelId: AiWolfModelId | null;
 }
 
+interface ApiKeyRequirement {
+  modelId: AiWolfModelId;
+  modelName: string;
+  envNames: string[];
+}
+
 const OPENAI_MODEL = process.env.AI_WOLF_OPENAI_MODEL ?? "gpt-4o";
 const GEMINI_MODEL = process.env.AI_WOLF_GEMINI_MODEL ?? "gemini-2.5-pro";
 const CLAUDE_MODEL =
   process.env.AI_WOLF_CLAUDE_MODEL ?? "claude-sonnet-4-20250514";
 const DEEPSEEK_MODEL = process.env.AI_WOLF_DEEPSEEK_MODEL ?? "deepseek-chat";
 const GROK_MODEL = process.env.AI_WOLF_GROK_MODEL ?? "grok-4.20";
+
+const API_KEY_REQUIREMENTS: Record<
+  AiWolfModelId,
+  Omit<ApiKeyRequirement, "modelId" | "modelName">
+> = {
+  chatgpt: { envNames: ["OPENAI_API_KEY"] },
+  gemini: { envNames: ["GEMINI_API_KEY"] },
+  claude: { envNames: ["ANTHROPIC_API_KEY"] },
+  deepseek: { envNames: ["DEEPSEEK_API_KEY", "DEEP_SEEK_API_KEY"] },
+  grok: { envNames: ["XAI_API_KEY"] },
+};
+
+export class AiWolfConfigurationError extends Error {
+  missingKeys: ApiKeyRequirement[];
+
+  constructor(missingKeys: ApiKeyRequirement[]) {
+    const formatted = missingKeys
+      .map(
+        (missing) =>
+          `${missing.modelName}: ${missing.envNames.join(" または ")}`
+      )
+      .join("、");
+    super(
+      `AI狼を開始できません。必要なAPI KEYが不足しています: ${formatted}。.env.localを設定して開発サーバーを再起動してください。`
+    );
+    this.name = "AiWolfConfigurationError";
+    this.missingKeys = missingKeys;
+  }
+}
 
 function env(...names: string[]) {
   return names.map((name) => process.env[name]).find(Boolean);
@@ -190,6 +225,28 @@ function createSessionSetup(input: AiWolfGenerateInput): SessionSetup {
     ),
     huntPlan: createSpeakerPlan(teams, huntTurns, "hunt", stanceA, stanceB),
   };
+}
+
+function validateApiKeys(setup: SessionSetup) {
+  const models = [setup.moderator, ...setup.participants];
+  const uniqueModels = Array.from(
+    new Map(models.map((model) => [model.id, model])).values()
+  );
+  const missingKeys = uniqueModels.flatMap((model) => {
+    const requirement = API_KEY_REQUIREMENTS[model.id];
+    if (env(...requirement.envNames)) return [];
+    return [
+      {
+        modelId: model.id,
+        modelName: model.name,
+        envNames: requirement.envNames,
+      },
+    ];
+  });
+
+  if (missingKeys.length > 0) {
+    throw new AiWolfConfigurationError(missingKeys);
+  }
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -723,6 +780,7 @@ export async function* streamAiWolfSession(
   input: AiWolfGenerateInput
 ): AsyncGenerator<AiWolfStreamEvent> {
   const setup = createSessionSetup(input);
+  validateApiKeys(setup);
   const usedModelVersions = new Set<string>();
   const debateMessages: AiWolfMessage[] = [];
   const huntMessages: AiWolfMessage[] = [];
