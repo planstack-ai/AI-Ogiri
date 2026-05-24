@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   AI_WOLF_MAX_DEBATE_TURNS,
@@ -338,6 +339,61 @@ function applyMessageEvent(
   };
 }
 
+export function AiWolfSessionView({
+  session,
+  thinking,
+  completed = true,
+  showVote = true,
+}: {
+  session: AiWolfSession;
+  thinking?: ThinkingState | null;
+  completed?: boolean;
+  showVote?: boolean;
+}) {
+  return (
+    <>
+      <SessionSummary session={session} />
+
+      <section className="space-y-3">
+        {session.moderatorNotes.opening && (
+          <ModeratorNote
+            label="Opening"
+            note={session.moderatorNotes.opening}
+            session={session}
+          />
+        )}
+        <div className="space-y-3">
+          {session.debateMessages.map((message) => (
+            <ThreadMessage key={message.id} message={message} session={session} />
+          ))}
+        </div>
+        {session.moderatorNotes.transition && (
+          <ModeratorNote
+            label="Phase Change"
+            note={session.moderatorNotes.transition}
+            session={session}
+          />
+        )}
+        <div className="space-y-3">
+          {session.huntMessages.map((message) => (
+            <ThreadMessage key={message.id} message={message} session={session} />
+          ))}
+        </div>
+        {session.moderatorNotes.closing && (
+          <ModeratorNote
+            label="Vote"
+            note={session.moderatorNotes.closing}
+            session={session}
+          />
+        )}
+        {thinking && <ThinkingCard thinking={thinking} session={session} />}
+      </section>
+
+      {completed && showVote && <VotePanel session={session} />}
+    </>
+  );
+}
+
 export function AiWolfGame() {
   const [topic, setTopic] = useState(INITIAL_PRESET.topic);
   const [stanceA, setStanceA] = useState(INITIAL_PRESET.stanceA);
@@ -478,7 +534,15 @@ export function AiWolfGame() {
             <p className="text-sm font-bold uppercase tracking-wide text-cyan-300">
               AI Werewolf
             </p>
-            <h1 className="mt-1 text-3xl font-bold text-white">AI狼</h1>
+            <div className="mt-1 flex items-center justify-between gap-3">
+              <h1 className="text-3xl font-bold text-white">AI狼</h1>
+              <Link
+                href="/ai-wolf/archive"
+                className="rounded-lg border border-slate-600 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-cyan-400 hover:text-white"
+              >
+                アーカイブ
+              </Link>
+            </div>
             <p className="mt-2 text-sm leading-6 text-slate-400">
               4体が討論し、残り1体が司会。最後に人間ぽいAIをアウトにします。
             </p>
@@ -639,54 +703,11 @@ export function AiWolfGame() {
 
       <main className="min-w-0 space-y-5">
         {session ? (
-          <>
-            <SessionSummary session={session} />
-
-            <section className="space-y-3">
-              {session.moderatorNotes.opening && (
-                <ModeratorNote
-                  label="Opening"
-                  note={session.moderatorNotes.opening}
-                  session={session}
-                />
-              )}
-              <div className="space-y-3">
-                {session.debateMessages.map((message) => (
-                  <ThreadMessage
-                    key={message.id}
-                    message={message}
-                    session={session}
-                  />
-                ))}
-              </div>
-              {session.moderatorNotes.transition && (
-                <ModeratorNote
-                  label="Phase Change"
-                  note={session.moderatorNotes.transition}
-                  session={session}
-                />
-              )}
-              <div className="space-y-3">
-                {session.huntMessages.map((message) => (
-                  <ThreadMessage
-                    key={message.id}
-                    message={message}
-                    session={session}
-                  />
-                ))}
-              </div>
-              {session.moderatorNotes.closing && (
-                <ModeratorNote
-                  label="Vote"
-                  note={session.moderatorNotes.closing}
-                  session={session}
-                />
-              )}
-              {thinking && <ThinkingCard thinking={thinking} session={session} />}
-            </section>
-
-            {completed && <VotePanel session={session} />}
-          </>
+          <AiWolfSessionView
+            session={session}
+            thinking={thinking}
+            completed={completed}
+          />
         ) : (
           <section className="rounded-xl border border-slate-700 bg-slate-800/70 p-6">
             <div className="grid gap-5 md:grid-cols-2">

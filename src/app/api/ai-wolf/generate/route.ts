@@ -3,6 +3,7 @@ import {
   generateAiWolfSession,
   streamAiWolfSession,
 } from "@/lib/ai-wolf/generator";
+import { saveAiWolfSession } from "@/lib/ai-wolf/archive";
 import type { AiWolfGenerateInput } from "@/lib/ai-wolf/types";
 
 export const runtime = "nodejs";
@@ -24,6 +25,9 @@ export async function POST(request: NextRequest) {
 
         try {
           for await (const event of streamAiWolfSession(body)) {
+            if (event.type === "done") {
+              await saveAiWolfSession(event.session);
+            }
             send(event);
           }
         } catch (error) {
@@ -48,5 +52,6 @@ export async function POST(request: NextRequest) {
   }
 
   const session = await generateAiWolfSession(body);
+  await saveAiWolfSession(session);
   return NextResponse.json(session);
 }
