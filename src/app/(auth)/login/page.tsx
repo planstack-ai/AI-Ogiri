@@ -6,6 +6,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const supabaseRef = useRef<SupabaseClient | null>(null);
 
   function getSupabase() {
@@ -17,7 +18,15 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-    await getSupabase().auth.signInWithOAuth({
+    setError(null);
+    const supabase = getSupabase();
+    if (!supabase) {
+      setError("Supabaseの環境変数が設定されていません");
+      setLoading(false);
+      return;
+    }
+
+    await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/callback`,
@@ -27,7 +36,15 @@ export default function LoginPage() {
 
   const handleGithubLogin = async () => {
     setLoading(true);
-    await getSupabase().auth.signInWithOAuth({
+    setError(null);
+    const supabase = getSupabase();
+    if (!supabase) {
+      setError("Supabaseの環境変数が設定されていません");
+      setLoading(false);
+      return;
+    }
+
+    await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
         redirectTo: `${window.location.origin}/callback`,
@@ -45,6 +62,11 @@ export default function LoginPage() {
           </p>
         </div>
         <div className="space-y-3">
+          {error && (
+            <p className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+              {error}
+            </p>
+          )}
           <button
             onClick={handleGoogleLogin}
             disabled={loading}

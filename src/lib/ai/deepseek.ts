@@ -6,12 +6,13 @@ export async function generateDeepSeek(
   prompt: string,
   systemPrompt: string
 ): Promise<AiResponse> {
-  if (!process.env.DEEPSEEK_API_KEY) {
+  const apiKey = process.env.DEEPSEEK_API_KEY ?? process.env.DEEP_SEEK_API_KEY;
+  if (!apiKey) {
     throw new Error("DEEPSEEK_API_KEY is required");
   }
 
   const client = new OpenAI({
-    apiKey: process.env.DEEPSEEK_API_KEY,
+    apiKey,
     baseURL: "https://api.deepseek.com",
   });
 
