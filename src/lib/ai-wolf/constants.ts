@@ -5,7 +5,7 @@ import type {
 } from "./types";
 
 export const AI_WOLF_MIN_DEBATE_TURNS = 8;
-export const AI_WOLF_MAX_DEBATE_TURNS = 12;
+export const AI_WOLF_MAX_DEBATE_TURNS = 30;
 export const AI_WOLF_MIN_HUNT_TURNS = 3;
 export const AI_WOLF_MAX_HUNT_TURNS = 5;
 

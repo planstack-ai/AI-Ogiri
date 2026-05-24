@@ -7,7 +7,7 @@ import { saveAiWolfSession } from "@/lib/ai-wolf/archive";
 import type { AiWolfGenerateInput } from "@/lib/ai-wolf/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 180;
+export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => ({}))) as AiWolfGenerateInput;

@@ -633,10 +633,15 @@ export function AiWolfGame() {
                 type="range"
                 min={AI_WOLF_MIN_DEBATE_TURNS}
                 max={AI_WOLF_MAX_DEBATE_TURNS}
+                step={1}
                 value={debateTurns}
                 onChange={(event) => setDebateTurns(Number(event.target.value))}
                 className="w-full accent-cyan-400"
               />
+              <div className="mt-1 flex justify-between text-xs text-slate-500">
+                <span>{AI_WOLF_MIN_DEBATE_TURNS}</span>
+                <span>{AI_WOLF_MAX_DEBATE_TURNS}</span>
+              </div>
             </div>
 
             <div>
