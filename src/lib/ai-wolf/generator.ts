@@ -219,6 +219,12 @@ function normalizeText(value: unknown, fallback: string, maxLength = 420) {
   return (text || fallback).replace(/\s+/g, " ").slice(0, maxLength);
 }
 
+function isPhilosophicalTopic(topic: string) {
+  return /意味|生きる|人生|死|幸福|自由意志|意識|神|存在|倫理|正義|美|真理/.test(
+    topic
+  );
+}
+
 function isParticipantModelId(
   value: unknown,
   participants: AiWolfParticipant[]
@@ -256,6 +262,22 @@ function buildGameContext(setup: SessionSetup) {
   ].join("\n");
 }
 
+function buildDepthInstruction(setup: SessionSetup) {
+  if (isPhilosophicalTopic(setup.topic)) {
+    return `今回のテーマは哲学・存在論寄りです。議論は生活アドバイスに逃げず、次の層を使って深掘りしてください。
+- 定義: 「意味」「存在」「価値」「人間」を何として扱うかを明示する。
+- 第一原理: 物理法則、進化、意識、言語、共同体、死の有限性などから主張を組み立てる。
+- 強い例: 「人間はタンパク質のかたまり」「宇宙は物理現象で、地球はその残滓にすぎない」「意味は人間の神経系が作る錯覚か、それとも関係性から発生する実在か」のような本質的な言い方を使う。
+- 反論: 相手の最も強い主張を一度立てた上で、その前提を崩す。
+- 禁止: 「人それぞれ」「大切なのは気持ち」「毎日を大切に」だけで終わる浅い結論。`;
+  }
+
+  return `今回のテーマは実用・価値判断寄りです。議論は感想で終わらせず、次の層を使って深掘りしてください。
+- 条件: 年収、家族構成、地域、時間、制度、失敗ケースなどを置く。
+- 比較: 10年後、最悪ケース、見落とされるコスト、相手案が壊れる条件を出す。
+- 反論: 相手の良い点を認めたうえで、自陣営が勝つ条件を明確にする。`;
+}
+
 function buildSpeakerSystemPrompt(speaker: AiWolfParticipant) {
   return `あなたは討論ゲーム「AI狼」に参加している${speaker.name}です。
 
@@ -268,13 +290,14 @@ function buildSpeakerSystemPrompt(speaker: AiWolfParticipant) {
 - ただし最終的に「一番人間ぽい」と投票されたAIはアウト。
 - 人間らしすぎる感情の揺れ、過剰な共感、個人的体験の偽装は避ける。
 - それでも観戦者が読める自然な日本語で話す。
-- 抽象論だけで終わらせず、必ず具体例、条件、相手への反論を入れる。
-- 例は「年収700万円の共働き」「小学生がいる家庭」「築20年の修繕費」「片道45分の通勤」など、議論に使える設定にする。
+- 抽象論だけで終わらせず、テーマに応じて第一原理、定義、具体例、条件、相手への反論を入れる。
+- 実用テーマでは「年収700万円の共働き」「小学生がいる家庭」「築20年の修繕費」「片道45分の通勤」など、議論に使える設定にする。
+- 哲学テーマでは「人間はタンパク質のかたまり」「宇宙は物理現象で、地球はその残滓にすぎない」「意味は神経系が作る錯覚か、関係性から発生する実在か」など、本質に近い前提から論じる。
 
 出力ルール:
 - JSONだけを返す。Markdownや前置きは禁止。
-- textは170〜280字。
-- 構成は「直前への反応 → 自陣営の主張 → 具体例 → 相手案の弱点」の順に近づける。
+- textは220〜380字。
+- 構成は「直前への反応 → 前提/定義 → 自陣営の主張 → 強い例/反例 → 相手案の弱点」の順に近づける。
 - 同じ言い回しを避け、直前の発言に反応する。`;
 }
 
@@ -330,8 +353,8 @@ ${previous}
 相手陣営の主張: ${item.opponentStance}
 
 直前までの流れを踏まえて、1ターン分だけ発言してください。
-抽象的な価値判断だけでは弱いので、生活シーン、金額、時間、家族構成、失敗ケースなどを1つ入れてください。
-相手陣営の良い点を認めるだけで終わらず、どの条件で自陣営が上回るかを明確にしてください。
+${buildDepthInstruction(setup)}
+発言は相手の直前発言を受け、論点を一段深くしてください。単なる同意や一般論ではなく、相手の前提を攻撃してください。
 出力形式:
 { "text": "発言本文" }`;
 }
@@ -408,7 +431,7 @@ async function callOpenAiCompatible(
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
     ],
-    max_tokens: 520,
+    max_tokens: 760,
     temperature: 0.85,
   });
 
@@ -447,7 +470,7 @@ async function callClaude(
   const client = new Anthropic({ apiKey });
   const message = await client.messages.create({
     model: CLAUDE_MODEL,
-    max_tokens: 520,
+    max_tokens: 760,
     temperature: 0.85,
     system: systemPrompt,
     messages: [{ role: "user", content: prompt }],
@@ -499,7 +522,17 @@ async function callModel(
   }
 }
 
-function fallbackDebateLine(item: SpeakerPlanItem, index: number) {
+function fallbackDebateLine(item: SpeakerPlanItem, index: number, topic: string) {
+  if (isPhilosophicalTopic(topic)) {
+    const angles = [
+      "人間を炭素とタンパク質の一時的な配列と見るなら、意味は宇宙側に刻まれた属性ではなく、脳が作る解釈にすぎません",
+      "宇宙が物理法則に従う現象の連鎖で、地球がその残滓なら、人生の意味も外部から与えられるものではなく、言語と共同体が後付けした秩序です",
+      "ただし錯覚だから無価値とは限りません。痛みや愛着も神経活動ですが、主体にとっては現実として作用するため、意味も機能的実在になり得ます",
+      "相手が意味を否定するなら、なぜ否定の言葉に説得力を持たせようとするのかが問題です。説得という行為自体が価値の存在を前提にしています",
+    ];
+    return `${item.speakerName}は${item.stance}です。${angles[index % angles.length]}。${item.opponentStance}の主張は強いですが、前提をどこに置くかで結論は変わります。`;
+  }
+
   const angles = [
     "年収700万円の共働き世帯で小学生がいるなら、初期費用だけでなく通学区と10年後の住み替えコストまで含めて見るべきです",
     "相手の主張は筋が通っていますが、転職や介護が起きない前提に寄りすぎると、築20年時点の修繕費や通勤時間の変化を見落とします",
@@ -576,7 +609,7 @@ async function generateDebateMessage(
   history: AiWolfMessage[],
   usedModelVersions: Set<string>
 ): Promise<AiWolfMessage> {
-  const fallback = fallbackDebateLine(item, index);
+  const fallback = fallbackDebateLine(item, index, setup.topic);
   try {
     const result = await callModel(
       item.speakerId,

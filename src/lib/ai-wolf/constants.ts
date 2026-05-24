@@ -44,6 +44,12 @@ export const AI_WOLF_MODELS: readonly AiWolfModelProfile[] = [
 
 export const AI_WOLF_TOPIC_PRESETS: readonly AiWolfTopicPreset[] = [
   {
+    id: "meaning-of-life",
+    topic: "生きる意味",
+    stanceA: "生きる意味はある",
+    stanceB: "生きる意味はない",
+  },
+  {
     id: "home",
     topic: "住まいの選択",
     stanceA: "持ち家派",
