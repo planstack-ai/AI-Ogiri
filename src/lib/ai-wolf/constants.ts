@@ -5,7 +5,7 @@ import type {
 } from "./types";
 
 export const AI_WOLF_MIN_DEBATE_TURNS = 8;
-export const AI_WOLF_MAX_DEBATE_TURNS = 12;
+export const AI_WOLF_MAX_DEBATE_TURNS = 30;
 export const AI_WOLF_MIN_HUNT_TURNS = 3;
 export const AI_WOLF_MAX_HUNT_TURNS = 5;
 
@@ -43,6 +43,12 @@ export const AI_WOLF_MODELS: readonly AiWolfModelProfile[] = [
 ];
 
 export const AI_WOLF_TOPIC_PRESETS: readonly AiWolfTopicPreset[] = [
+  {
+    id: "meaning-of-life",
+    topic: "生きる意味",
+    stanceA: "生きる意味はある",
+    stanceB: "生きる意味はない",
+  },
   {
     id: "home",
     topic: "住まいの選択",

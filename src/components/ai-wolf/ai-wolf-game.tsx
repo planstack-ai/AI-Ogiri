@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { Fragment, type ReactNode, useMemo, useState } from "react";
 import {
   AI_WOLF_MAX_DEBATE_TURNS,
   AI_WOLF_MAX_HUNT_TURNS,
@@ -92,9 +93,63 @@ function ModeratorNote({
           {session.moderator.name}
         </span>
       </div>
-      <p className="text-sm leading-6 text-slate-200">{note}</p>
+      <p className="text-sm leading-6 text-slate-200">
+        <DecoratedText text={note} />
+      </p>
     </div>
   );
+}
+
+function renderQuotedText(text: string, keyPrefix: string): ReactNode[] {
+  const quotePattern = /(「[^」]+」|『[^』]+』|“[^”]+”)/g;
+  const wholeQuotePattern = /^(「[^」]+」|『[^』]+』|“[^”]+”)$/;
+  const parts = text.split(quotePattern);
+
+  return parts.map((part, index) => {
+    if (!part) return null;
+    const key = `${keyPrefix}-quote-${index}`;
+    if (wholeQuotePattern.test(part)) {
+      return (
+        <span
+          key={key}
+          className="rounded border border-cyan-400/20 bg-cyan-400/10 px-1 text-cyan-100"
+        >
+          {part}
+        </span>
+      );
+    }
+    return <Fragment key={key}>{part}</Fragment>;
+  });
+}
+
+function DecoratedText({ text }: { text: string }) {
+  const strongPattern = /<strong>([\s\S]*?)<\/strong>/g;
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = strongPattern.exec(text))) {
+    const before = text.slice(lastIndex, match.index);
+    if (before) {
+      nodes.push(...renderQuotedText(before, `plain-${nodes.length}`));
+    }
+    nodes.push(
+      <strong
+        key={`strong-${match.index}`}
+        className="font-extrabold text-white decoration-cyan-300 underline-offset-4"
+      >
+        {renderQuotedText(match[1] ?? "", `strong-${match.index}`)}
+      </strong>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  const rest = text.slice(lastIndex);
+  if (rest) {
+    nodes.push(...renderQuotedText(rest, `plain-${nodes.length}`));
+  }
+
+  return <>{nodes.length ? nodes : text}</>;
 }
 
 function ThinkingCard({
@@ -174,7 +229,7 @@ function ThreadMessage({
         )}
       </div>
       <p className="whitespace-pre-wrap text-[15px] leading-7 text-slate-100">
-        {message.text}
+        <DecoratedText text={message.text} />
       </p>
     </article>
   );
@@ -338,6 +393,61 @@ function applyMessageEvent(
   };
 }
 
+export function AiWolfSessionView({
+  session,
+  thinking,
+  completed = true,
+  showVote = true,
+}: {
+  session: AiWolfSession;
+  thinking?: ThinkingState | null;
+  completed?: boolean;
+  showVote?: boolean;
+}) {
+  return (
+    <>
+      <SessionSummary session={session} />
+
+      <section className="space-y-3">
+        {session.moderatorNotes.opening && (
+          <ModeratorNote
+            label="Opening"
+            note={session.moderatorNotes.opening}
+            session={session}
+          />
+        )}
+        <div className="space-y-3">
+          {session.debateMessages.map((message) => (
+            <ThreadMessage key={message.id} message={message} session={session} />
+          ))}
+        </div>
+        {session.moderatorNotes.transition && (
+          <ModeratorNote
+            label="Phase Change"
+            note={session.moderatorNotes.transition}
+            session={session}
+          />
+        )}
+        <div className="space-y-3">
+          {session.huntMessages.map((message) => (
+            <ThreadMessage key={message.id} message={message} session={session} />
+          ))}
+        </div>
+        {session.moderatorNotes.closing && (
+          <ModeratorNote
+            label="Vote"
+            note={session.moderatorNotes.closing}
+            session={session}
+          />
+        )}
+        {thinking && <ThinkingCard thinking={thinking} session={session} />}
+      </section>
+
+      {completed && showVote && <VotePanel session={session} />}
+    </>
+  );
+}
+
 export function AiWolfGame() {
   const [topic, setTopic] = useState(INITIAL_PRESET.topic);
   const [stanceA, setStanceA] = useState(INITIAL_PRESET.stanceA);
@@ -478,7 +588,15 @@ export function AiWolfGame() {
             <p className="text-sm font-bold uppercase tracking-wide text-cyan-300">
               AI Werewolf
             </p>
-            <h1 className="mt-1 text-3xl font-bold text-white">AI狼</h1>
+            <div className="mt-1 flex items-center justify-between gap-3">
+              <h1 className="text-3xl font-bold text-white">AI狼</h1>
+              <Link
+                href="/ai-wolf/archive"
+                className="rounded-lg border border-slate-600 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-cyan-400 hover:text-white"
+              >
+                アーカイブ
+              </Link>
+            </div>
             <p className="mt-2 text-sm leading-6 text-slate-400">
               4体が討論し、残り1体が司会。最後に人間ぽいAIをアウトにします。
             </p>
@@ -569,10 +687,15 @@ export function AiWolfGame() {
                 type="range"
                 min={AI_WOLF_MIN_DEBATE_TURNS}
                 max={AI_WOLF_MAX_DEBATE_TURNS}
+                step={1}
                 value={debateTurns}
                 onChange={(event) => setDebateTurns(Number(event.target.value))}
                 className="w-full accent-cyan-400"
               />
+              <div className="mt-1 flex justify-between text-xs text-slate-500">
+                <span>{AI_WOLF_MIN_DEBATE_TURNS}</span>
+                <span>{AI_WOLF_MAX_DEBATE_TURNS}</span>
+              </div>
             </div>
 
             <div>
@@ -639,54 +762,11 @@ export function AiWolfGame() {
 
       <main className="min-w-0 space-y-5">
         {session ? (
-          <>
-            <SessionSummary session={session} />
-
-            <section className="space-y-3">
-              {session.moderatorNotes.opening && (
-                <ModeratorNote
-                  label="Opening"
-                  note={session.moderatorNotes.opening}
-                  session={session}
-                />
-              )}
-              <div className="space-y-3">
-                {session.debateMessages.map((message) => (
-                  <ThreadMessage
-                    key={message.id}
-                    message={message}
-                    session={session}
-                  />
-                ))}
-              </div>
-              {session.moderatorNotes.transition && (
-                <ModeratorNote
-                  label="Phase Change"
-                  note={session.moderatorNotes.transition}
-                  session={session}
-                />
-              )}
-              <div className="space-y-3">
-                {session.huntMessages.map((message) => (
-                  <ThreadMessage
-                    key={message.id}
-                    message={message}
-                    session={session}
-                  />
-                ))}
-              </div>
-              {session.moderatorNotes.closing && (
-                <ModeratorNote
-                  label="Vote"
-                  note={session.moderatorNotes.closing}
-                  session={session}
-                />
-              )}
-              {thinking && <ThinkingCard thinking={thinking} session={session} />}
-            </section>
-
-            {completed && <VotePanel session={session} />}
-          </>
+          <AiWolfSessionView
+            session={session}
+            thinking={thinking}
+            completed={completed}
+          />
         ) : (
           <section className="rounded-xl border border-slate-700 bg-slate-800/70 p-6">
             <div className="grid gap-5 md:grid-cols-2">
