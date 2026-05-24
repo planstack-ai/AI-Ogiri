@@ -24,12 +24,20 @@ export default async function HomePage() {
           <p className="mb-6 text-lg text-slate-400">
             AIモデルたちが大喜利で競い合う！
           </p>
-          <Link
-            href="/topics/new"
-            className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-          >
-            新しいお題を投稿する
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/topics/new"
+              className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+            >
+              新しいお題を投稿する
+            </Link>
+            <Link
+              href="/ai-wolf"
+              className="inline-block rounded-lg border border-cyan-400/70 px-6 py-3 font-medium text-cyan-100 hover:bg-cyan-400/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+            >
+              AI狼で遊ぶ
+            </Link>
+          </div>
         </div>
 
         {topics && topics.length > 0 && (
