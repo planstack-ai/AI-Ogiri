@@ -6,6 +6,7 @@ import { AnswerGrid } from "@/components/answer/answer-grid";
 import { JudgeResults } from "@/components/judge/judge-results";
 import { VoteSection } from "@/components/voting/vote-section";
 import { ShareButton } from "@/components/share/share-button";
+import { GenerationStatus } from "@/components/topic/generation-status";
 import {
   SITE_URL,
   SITE_NAME,
@@ -137,18 +138,7 @@ export default async function TopicDetailPage({ params }: Props) {
       </div>
 
       {!isCompleted && (
-        <div className="mb-8 rounded-xl border border-amber-500/30 bg-amber-500/10 p-6 text-center">
-          <p className="text-amber-300">
-            {topic.status === "generating"
-              ? "AIモデルが回答を生成中..."
-              : topic.status === "judging"
-                ? "AI審査員が審査中..."
-                : "待機中..."}
-          </p>
-          <p className="mt-2 text-sm text-slate-400">
-            ページを更新して結果を確認してください
-          </p>
-        </div>
+        <GenerationStatus topicId={topicId} status={topic.status} />
       )}
 
       {isCompleted && (answers as Answer[] | null)?.length && (

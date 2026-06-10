@@ -6,6 +6,22 @@ import { judgeAnswers } from "@/lib/ai/judge";
 import { JUDGE_MODEL } from "@/lib/ai/model-config";
 import { getCharacterById } from "@/lib/ai/characters-dataset";
 
+export const runtime = "nodejs";
+export const maxDuration = 300;
+
+type SupabaseMutationResult = {
+  error: { message: string } | null;
+};
+
+function throwIfSupabaseError(
+  result: SupabaseMutationResult,
+  action: string
+) {
+  if (result.error) {
+    throw new Error(`${action}: ${result.error.message}`);
+  }
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ topicId: string }> }
@@ -30,38 +46,66 @@ export async function POST(
   if (!topic) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  if (!process.env.OPENAI_API_KEY) {
+    return NextResponse.json(
+      { error: "OPENAI_API_KEY is required for AI judging" },
+      { status: 500 }
+    );
+  }
+  if (topic.status === "completed") {
+    return NextResponse.json({ success: true, alreadyCompleted: true });
+  }
   if (topic.status !== "pending") {
     return NextResponse.json({ error: "Already processed" }, { status: 409 });
   }
 
-  await admin
-    .from("topics")
-    .update({ status: "generating" })
-    .eq("id", topicId);
-
   try {
+    const { data: lockedTopic, error: lockError } = await admin
+      .from("topics")
+      .update({ status: "generating" })
+      .eq("id", topicId)
+      .eq("status", "pending")
+      .select("id")
+      .maybeSingle();
+
+    if (lockError) {
+      throw new Error(
+        `Failed to mark topic as generating: ${lockError.message}`
+      );
+    }
+    if (!lockedTopic) {
+      return NextResponse.json({ error: "Already processed" }, { status: 409 });
+    }
+
     // 1. 5モデル並列で回答生成
     const isCharacterMode = topic.is_character_mode ?? false;
     const answers = await generateAllAnswers(topic.prompt, isCharacterMode);
 
     // 2. 回答をDBに保存
-    await admin.from("answers").insert(
-      answers.map((a) => ({
-        topic_id: topicId,
-        model_name: a.modelName,
-        answer_text: a.text,
-        generation_time_ms: a.generationTimeMs,
-        character_id: a.characterId,
-        model_version: a.modelVersion || null,
-        token_count: a.tokenCount,
-      }))
+    throwIfSupabaseError(
+      await admin.from("answers").upsert(
+        answers.map((a) => ({
+          topic_id: topicId,
+          model_name: a.modelName,
+          answer_text: a.text,
+          generation_time_ms: a.generationTimeMs,
+          character_id: a.characterId,
+          model_version: a.modelVersion || null,
+          token_count: a.tokenCount,
+        })),
+        { onConflict: "topic_id,model_name" }
+      ),
+      "Failed to save AI answers"
     );
 
     // 3. AI審査
-    await admin
-      .from("topics")
-      .update({ status: "judging" })
-      .eq("id", topicId);
+    throwIfSupabaseError(
+      await admin
+        .from("topics")
+        .update({ status: "judging" })
+        .eq("id", topicId),
+      "Failed to mark topic as judging"
+    );
     const judgment = await judgeAnswers(
       topic.prompt,
       answers.map((a) => ({
@@ -75,25 +119,32 @@ export async function POST(
     );
 
     // 4. 審査結果保存
-    await admin.from("ai_judgments").insert({
-      topic_id: topicId,
-      judge_model: JUDGE_MODEL,
-      rankings: judgment.rankings,
-      overall_comment: judgment.overall_comment,
-    });
+    throwIfSupabaseError(
+      await admin.from("ai_judgments").upsert(
+        {
+          topic_id: topicId,
+          judge_model: JUDGE_MODEL,
+          rankings: judgment.rankings,
+          overall_comment: judgment.overall_comment,
+        },
+        { onConflict: "topic_id" }
+      ),
+      "Failed to save AI judgment"
+    );
 
     // 5. 完了
-    await admin
-      .from("topics")
-      .update({ status: "completed" })
-      .eq("id", topicId);
+    throwIfSupabaseError(
+      await admin
+        .from("topics")
+        .update({ status: "completed" })
+        .eq("id", topicId),
+      "Failed to mark topic as completed"
+    );
 
     return NextResponse.json({ success: true, answers, judgment });
-  } catch {
-    await admin
-      .from("topics")
-      .update({ status: "pending" })
-      .eq("id", topicId);
+  } catch (error) {
+    console.error("Failed to generate topic answers:", error);
+    await admin.from("topics").update({ status: "pending" }).eq("id", topicId);
     return NextResponse.json({ error: "Generation failed" }, { status: 500 });
   }
 }

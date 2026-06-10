@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { AiResponse } from "./types";
-import { MODEL_IDS } from "./model-config";
+import { MODEL_IDS, openAiTemperatureParam } from "./model-config";
 
 export async function generateChatGPT(
   prompt: string,
@@ -12,14 +12,15 @@ export async function generateChatGPT(
 
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const start = Date.now();
+  const model = MODEL_IDS.chatgpt;
   const response = await client.chat.completions.create({
-    model: MODEL_IDS.chatgpt,
+    model,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
     ],
     max_completion_tokens: 500,
-    temperature: 0.9,
+    ...openAiTemperatureParam(model, 0.9),
   });
   return {
     text: response.choices[0].message.content ?? "",
