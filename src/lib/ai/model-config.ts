@@ -25,3 +25,14 @@ export const TOPIC_GENERATOR_MODEL =
   process.env.OPENAI_TOPIC_MODEL ??
   process.env.OPENAI_ANSWER_MODEL ??
   DEFAULT_MODEL_IDS.chatgpt;
+
+export function openAiTemperatureParam(
+  model: string,
+  temperature: number
+): { temperature?: number } {
+  if (model.toLowerCase().startsWith("gpt-5")) {
+    return {};
+  }
+
+  return { temperature };
+}

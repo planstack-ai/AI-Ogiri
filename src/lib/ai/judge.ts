@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { JUDGE_MODEL } from "./model-config";
+import { JUDGE_MODEL, openAiTemperatureParam } from "./model-config";
 
 const JUDGE_SYSTEM_PROMPT = `あなたは大喜利の審査員です。お題と5つのAIモデルの回答が与えられます。
 以下の基準で各回答を評価し、順位をつけてください：
@@ -74,6 +74,10 @@ export async function judgeAnswers(
     ? CHARACTER_JUDGE_SYSTEM_PROMPT
     : JUDGE_SYSTEM_PROMPT;
 
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is required for AI judging");
+  }
+
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const response = await client.chat.completions.create({
     model: JUDGE_MODEL,
@@ -83,7 +87,7 @@ export async function judgeAnswers(
     ],
     max_completion_tokens: 1000,
     response_format: { type: "json_object" },
-    temperature: 0.3,
+    ...openAiTemperatureParam(JUDGE_MODEL, 0.3),
   });
 
   return JSON.parse(response.choices[0].message.content!);
